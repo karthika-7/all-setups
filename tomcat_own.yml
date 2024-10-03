@@ -1,0 +1,27 @@
+---
+- hosts: all
+  connection: ssh
+  tasks:
+    - name: download tomcat from dlcdn
+      get_url:
+        url: "https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.95/bin/apache-tomcat-9.0.95.tar.gz"
+        dest: "/root/"
+
+    - name: untar the apache file
+      command: tar -zxvf apache-tomcat-9.0.95.tar.gz
+
+    - name: install java
+      command: yum install java-1.8.0-openjdk -y
+
+    - name: copying tomcat-user.xml file
+      template:
+        src: "tomcat-users.xml"
+        dest: "apache-tomcat-9.0.95/conf/"
+
+    - name: copying context.xml file
+      copy:
+        src: "context.xml"
+        dest: "apache-tomcat-9.0.95/webapps/manager/META-INF/"
+        
+    - name: start the tomcat
+      shell: nohup ./apache-tomcat-9.0.95/bin/startup.sh
